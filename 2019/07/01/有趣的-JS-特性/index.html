@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+
+
+<title>有趣的 JS 特性 | 田园码农</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+
+
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">LWL&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">LWL&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/categories">Categories</a>
+                
+                    <a class="menu-item" href="/tags">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div id="post-toc" class="post-toc">
+            <span class="post-toc-title">catalogue</span>
+            <div class="post-toc-content">
+                <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#利用-a-标签解析-URL"><span class="toc-text">利用 a 标签解析 URL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#void-运算符"><span class="toc-text">void 运算符</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用-void-替换-undefined"><span class="toc-text">使用 void 替换 undefined</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IntersectionObserver-是什么？"><span class="toc-text">IntersectionObserver 是什么？</span></a></li></ol>
+            </div>
+        </div>
+    
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">有趣的 JS 特性</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">lwl</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">July 1, 2019&nbsp;&nbsp;09:26:05</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/javascript/">javascript</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <section class="post-content">
+            <h2 id="利用-a-标签解析-URL"><a href="#利用-a-标签解析-URL" class="headerlink" title="利用 a 标签解析 URL"></a>利用 a 标签解析 URL</h2><p>有的时候我们需要从一个 URL 中提取域名，查询关键字，变量参数值等，一般我们会自己去解析 URL 来获取这些内容。可是你或许不知道还有更简单的方法。</p>
+<p>即创建一个 a 标签将需要解析的 URL 赋值给 a 的 href 属性，然后我们就能很方便的拿到这些内容。代码如下</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">parseURL</span>(<span class="params">url</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> a =  <span class="built_in">document</span>.createElement(<span class="string">'a'</span>);</span><br><span class="line">    a.href = url;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        host: a.hostname,</span><br><span class="line">        port: a.port,</span><br><span class="line">        query: a.search,</span><br><span class="line">        params: (<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            <span class="keyword">var</span> ret = &#123;&#125;,</span><br><span class="line">                seg = a.search.replace(<span class="regexp">/^\?/</span>,<span class="string">''</span>).split(<span class="string">'&amp;'</span>),</span><br><span class="line">                len = seg.length, i = <span class="number">0</span>, s;</span><br><span class="line">            <span class="keyword">for</span> (;i&lt;len;i++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (!seg[i]) &#123; <span class="keyword">continue</span>; &#125;</span><br><span class="line">                s = seg[i].split(<span class="string">'='</span>);</span><br><span class="line">                ret[s[<span class="number">0</span>]] = s[<span class="number">1</span>];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> ret;</span><br><span class="line">        &#125;)(),</span><br><span class="line">        hash: a.hash.replace(<span class="string">'#'</span>,<span class="string">''</span>)</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="void-运算符"><a href="#void-运算符" class="headerlink" title="void 运算符"></a>void 运算符</h2><blockquote>
+<p>void 运算符对给定的表达式进行求值，然后返回 undefined。</p>
+</blockquote>
+<p>由于 <strong>void</strong> 会忽略操作数的值，因此在操作数具有副作用的时候使用 <strong>void</strong> 会更加合理。</p>
+<h3 id="使用-void-替换-undefined"><a href="#使用-void-替换-undefined" class="headerlink" title="使用 void 替换 undefined"></a>使用 void 替换 undefined</h3><p>由于 <strong>undefined</strong> 并不是 <strong>JavaScript</strong> 的关键字，所以我们在赋值某个变量为 <strong>undefined</strong> 时可能会有点意想不到的结果。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">t</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="literal">undefined</span> = <span class="number">10</span>;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="literal">undefined</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(t()); <span class="comment">// 所有浏览器下都是10</span></span><br></pre></td></tr></table></figure>
+
+<p>如上代码我们可能希望赋值为 <strong>undefined</strong>，但却得到了 <strong>10</strong> 这个莫名其妙的情况。所以我们可以使用使用 <strong>void</strong> 替换 <strong>undefined</strong></p>
+<blockquote>
+<p>这也是为什么我们在很多源码中都能看到使用 <strong>void</strong> 替换 <strong>undefined</strong>。</p>
+</blockquote>
+<h2 id="IntersectionObserver-是什么？"><a href="#IntersectionObserver-是什么？" class="headerlink" title="IntersectionObserver 是什么？"></a>IntersectionObserver 是什么？</h2><blockquote>
+<p><code>IntersectionObserver</code> 可以用来监听元素是否进入了设备的可视区域之内，而不需要频繁的计算来做这个判断。</p>
+</blockquote>
+<p>所以我们可以用这个特性来处理曝光埋点，而不是用 <strong>getBoundingClientRect().top</strong> 这种更加损耗性能的方式来处理。</p>
+<p>当然你也可以用这个 API 来优化滚动吸顶,代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">IntersectionObserverFun: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> self = <span class="keyword">this</span>;</span><br><span class="line">    <span class="keyword">let</span> ele = self.$refs.pride_tab_fixed;</span><br><span class="line">    <span class="keyword">if</span>( !IntersectionObserver )&#123;</span><br><span class="line">        <span class="keyword">let</span> observer = <span class="keyword">new</span> IntersectionObserver(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            <span class="keyword">let</span> offsetTop = ele.getBoundingClientRect().top;</span><br><span class="line">            self.titleFixed = offsetTop &lt; <span class="number">0</span>;</span><br><span class="line">        &#125;, &#123;</span><br><span class="line">            threshold: [<span class="number">1</span>]</span><br><span class="line">        &#125;);</span><br><span class="line">        observer.observe(<span class="built_in">document</span>.getElementsByClassName(<span class="string">'title_box'</span>)[<span class="number">0</span>]);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">window</span>.addEventListener(<span class="string">'scroll'</span>, _.throttle(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">            <span class="keyword">let</span> offsetTop = ele.getBoundingClientRect().top;</span><br><span class="line">            self.titleFixed = offsetTop &lt; <span class="number">0</span>;</span><br><span class="line">        &#125;, <span class="number">50</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+        </section>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>lwl</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://liangwenle.github.io/2019/07/01/有趣的-JS-特性/">http://liangwenle.github.io/2019/07/01/有趣的-JS-特性/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a>CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Solgan:</span>
+                         <span>Do you believe in <strong>DESTINY<strong>?</strong></strong></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/前端/"># 前端</a>
+                    
+                        <a href="/tags/计算机/"># 计算机</a>
+                    
+                        <a href="/tags/技巧/"># 技巧</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+        </section>
+
+
+    </article>
+</div>
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© lwl | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Sirice19/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+    </div>
+</body>
+</html>
